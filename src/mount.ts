@@ -23,6 +23,7 @@ import { DwellSurveyor } from './agents/surveyor/index.js';
 import { DwellGatekeeper } from './agents/gatekeeper/index.js';
 import { DwellCultivatorPersonal } from './agents/cultivator-personal/index.js';
 import { DwellBridge } from './agents/bridge/index.js';
+import { DwellAnswerAgent } from './agents/answer-agent/index.js';
 
 export async function mountDwell(deps: DwellDeps): Promise<DwellHandle> {
   const { bb, zipper, nats, graph } = deps;
@@ -57,9 +58,9 @@ export async function mountDwell(deps: DwellDeps): Promise<DwellHandle> {
   //   DwellSurveyor            — maps knowledge graph topology and gap distance      ✅ Sprint 1B
   //   DwellGatekeeper          — validates readiness before Domain Twin calls        ✅ Sprint 1B
   //
-  // Sprint 2 agents (stubs — to be implemented):
-  //   DwellBridge         — detects plateaus, initiates Domain Twin engagement
-  //   DwellAnswerAgent    — evaluates Domain Twin contributions
+  // Sprint 2 agents:
+  //   DwellBridge         — detects plateaus, initiates Domain Twin engagement  ✅ Sprint 2A
+  //   DwellAnswerAgent    — evaluates Domain Twin contributions                  ✅ Sprint 2B
   //
   // @adopt:dwell-agent-list  [resolved: see above]
 
@@ -77,6 +78,11 @@ export async function mountDwell(deps: DwellDeps): Promise<DwellHandle> {
   const bridge = new DwellBridge(deps);
   bridge.mount();
   unsubscribers.push(() => bridge.dispose());
+
+  // ── Sprint 2B: DwellAnswerAgent ───────────────────────────────────────────
+  const answerAgent = new DwellAnswerAgent(deps);
+  answerAgent.mount();
+  unsubscribers.push(() => answerAgent.dispose());
 
   // Placeholder: announce that Dwell is mounted
   nats.publish('dwell.mounted', {
