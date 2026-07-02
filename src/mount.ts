@@ -84,6 +84,10 @@ export async function mountDwell(deps: DwellDeps): Promise<DwellHandle> {
   answerAgent.mount();
   unsubscribers.push(() => answerAgent.dispose());
 
+  // Domain Twin agents (DwellCultivatorDomain, DwellTester) are instantiated by
+  // Domain Twin implementations — see src/agents/domain-twin/
+  // They are NOT mounted here; the Personal Twin does not own Domain Twin agents.
+
   // Placeholder: announce that Dwell is mounted
   nats.publish('dwell.mounted', {
     version: '1.0.0',   // @adopt:dwell-version  [resolved: 1.0.0]

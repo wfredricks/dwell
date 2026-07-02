@@ -24,3 +24,21 @@ export type {
   DwellBBTool,
   DwellZipperRegistry,
 } from './bbtools/index.js';
+
+// ── Domain Twin Agents ──────────────────────────────────────────────────────
+// Instantiated by Domain Twin implementations, NOT by mountDwell().
+// See src/agents/domain-twin/ for details.
+
+export { DwellCultivatorDomain } from './agents/domain-twin/cultivator/index.js';
+export type {
+  DwellCultivatorDomainIdentity,
+  DomainChangeEvent,
+  DomainDelta,
+} from './agents/domain-twin/cultivator/index.js';
+
+export { DwellTester } from './agents/domain-twin/tester/index.js';
+export type {
+  DwellTesterIdentity,
+  AssessmentItem,
+  AssessmentBank,
+} from './agents/domain-twin/tester/index.js';
