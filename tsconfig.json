@@ -11,7 +11,8 @@
     "declaration": true,
     "paths": {
       "@dwell/*": ["./src/*"]
-    }
+    },
+    "types": ["node"]
   },
   "include": ["src/**/*.ts"],
   "exclude": ["node_modules", "dist", "**/__tests__/**"]

@@ -1,0 +1,111 @@
+# docker-compose.yml — Dwell Docker Constellation
+#
+# Ports offset to avoid clashing with existing running containers:
+#   NATS:   4222 taken → 4223:4222 / 8223:8222
+#   Neo4j:  7474/7687 taken → 7482:7474 / 7695:7687
+#   Runtime port:  3000 → 3010:3000
+#   UI port:       80   → 3011:80
+#
+# @adopt:dwell-compose-project [resolved: dwell-constellation]
+# @adopt:dwell-nats-host-port  [resolved: 4223]
+# @adopt:dwell-nats-mon-port   [resolved: 8223]
+# @adopt:dwell-neo4j-http-port [resolved: 7482]
+# @adopt:dwell-neo4j-bolt-port [resolved: 7695]
+# @adopt:dwell-runtime-host-port [resolved: 3010]
+# @adopt:dwell-ui-host-port    [resolved: 3011]
+
+name: dwell-constellation
+
+services:
+
+  # ── NATS — event fabric ────────────────────────────────────────────────────
+  nats:
+    image: nats:2.10-alpine
+    # @adopt:dwell-nats-host-port [resolved: 4223]
+    # @adopt:dwell-nats-mon-port  [resolved: 8223]
+    ports:
+      - "4223:4222"
+      - "8223:8222"
+    command: ["--jetstream", "--store_dir=/data", "--http_port=8222"]
+    volumes:
+      - nats_data:/data
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8222/healthz || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  # ── Neo4j BB — Blackboard persistent store ─────────────────────────────────
+  neo4j-bb:
+    image: neo4j:5-community
+    # @adopt:dwell-neo4j-http-port [resolved: 7482]
+    # @adopt:dwell-neo4j-bolt-port [resolved: 7695]
+    ports:
+      - "7482:7474"
+      - "7695:7687"
+    environment:
+      # @adopt:dwell-neo4j-bb-user     [resolved: neo4j]
+      # @adopt:dwell-neo4j-bb-password [resolved: dwell-bb]
+      NEO4J_AUTH: neo4j/dwell-bb
+    volumes:
+      - neo4j_bb_data:/data
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:7474 || exit 1"]
+      interval: 15s
+      timeout: 10s
+      retries: 10
+      start_period: 30s
+
+  # ── Dwell Runtime — the Personal Twin constellation core ──────────────────
+  dwell-runtime:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    # @adopt:dwell-runtime-host-port [resolved: 3010]
+    # @adopt:dwell-runtime-port      [resolved: 3000]
+    ports:
+      - "3010:3000"
+    environment:
+      # @adopt:dwell-nats-url [resolved: nats://nats:4222]
+      NATS_URL: nats://nats:4222
+      # @adopt:dwell-neo4j-bb-url      [resolved: bolt://neo4j-bb:7687]
+      NEO4J_URL: bolt://neo4j-bb:7687
+      # @adopt:dwell-neo4j-bb-user     [resolved: neo4j]
+      NEO4J_USER: neo4j
+      # @adopt:dwell-neo4j-bb-password [resolved: dwell-bb]
+      NEO4J_PASSWORD: dwell-bb
+    depends_on:
+      nats:
+        condition: service_healthy
+      neo4j-bb:
+        condition: service_healthy
+    restart: on-failure
+
+  # ── AWS SA Domain Twin — reference domain twin ────────────────────────────
+  aws-sa-domain-twin:
+    build:
+      context: ./test-fixtures/domain-twin
+      dockerfile: Dockerfile
+    environment:
+      # @adopt:dwell-nats-url [resolved: nats://nats:4222]
+      NATS_URL: nats://nats:4222
+    depends_on:
+      nats:
+        condition: service_healthy
+    restart: on-failure
+
+  # ── UI — vanilla dashboard served by nginx ────────────────────────────────
+  ui:
+    image: nginx:alpine
+    # @adopt:dwell-ui-host-port [resolved: 3011]
+    ports:
+      - "3011:80"
+    volumes:
+      - ./ui:/usr/share/nginx/html:ro
+    depends_on:
+      - dwell-runtime
+
+volumes:
+  nats_data:
+  neo4j_bb_data:

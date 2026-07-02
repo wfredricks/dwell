@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dwell Constellation</title>
+  <style>
+    /* @adopt:dwell-ui-theme [resolved: dark monospace] */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: #0d1117;
+      color: #c9d1d9;
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 14px;
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      min-height: 100vh;
+    }
+
+    h1 { color: #58a6ff; font-size: 1.4rem; letter-spacing: 0.04em; }
+    h2 { color: #79c0ff; font-size: 1rem; margin-bottom: 0.5rem; }
+
+    .row { display: flex; gap: 1.5rem; flex-wrap: wrap; }
+    .card {
+      background: #161b22;
+      border: 1px solid #30363d;
+      border-radius: 6px;
+      padding: 1rem;
+      flex: 1;
+      min-width: 260px;
+    }
+
+    /* Agents list */
+    #agent-list { list-style: none; }
+    #agent-list li {
+      padding: 0.3rem 0;
+      color: #3fb950;
+    }
+    #agent-list li::before { content: '✓ '; }
+    #agent-empty { color: #6e7681; font-style: italic; }
+
+    /* Intent form */
+    .intent-form { display: flex; gap: 0.5rem; margin-top: 0.5rem; }
+    .intent-form input {
+      flex: 1;
+      background: #0d1117;
+      border: 1px solid #30363d;
+      color: #c9d1d9;
+      padding: 0.4rem 0.7rem;
+      border-radius: 4px;
+      font-family: inherit;
+      font-size: 13px;
+    }
+    .intent-form input:focus { outline: 1px solid #58a6ff; }
+    .intent-form button {
+      background: #238636;
+      color: #fff;
+      border: none;
+      padding: 0.4rem 1rem;
+      border-radius: 4px;
+      cursor: pointer;
+      font-family: inherit;
+      font-size: 13px;
+    }
+    .intent-form button:hover { background: #2ea043; }
+    #intent-status { color: #6e7681; font-size: 12px; margin-top: 0.4rem; height: 1.2em; }
+
+    /* Event log */
+    #event-log {
+      background: #0d1117;
+      border: 1px solid #21262d;
+      border-radius: 4px;
+      padding: 0.7rem;
+      height: 340px;
+      overflow-y: auto;
+      font-size: 12px;
+      line-height: 1.6;
+    }
+    .ev-line { display: flex; gap: 0.5rem; padding: 0.1rem 0; border-bottom: 1px solid #21262d; }
+    .ev-time { color: #6e7681; flex-shrink: 0; width: 90px; }
+    .ev-subject { color: #58a6ff; flex-shrink: 0; width: 220px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .ev-data { color: #e6edf3; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; }
+
+    /* Status bar */
+    #status-bar {
+      font-size: 11px;
+      color: #6e7681;
+      border-top: 1px solid #21262d;
+      padding-top: 0.5rem;
+    }
+    #conn-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #da3633; margin-right: 4px; }
+    #conn-dot.connected { background: #3fb950; }
+  </style>
+</head>
+<body>
+  <h1>🖇️ Dwell Constellation</h1>
+
+  <div class="row">
+    <!-- Connected Agents -->
+    <div class="card">
+      <h2>Connected Agents</h2>
+      <ul id="agent-list"><li id="agent-empty">loading…</li></ul>
+    </div>
+
+    <!-- Declare Intent -->
+    <div class="card">
+      <h2>Declare Intent</h2>
+      <p style="color:#6e7681; font-size:12px; margin-bottom:0.4rem;">
+        Fire a <code>bb.intent.declared</code> event into the constellation.
+      </p>
+      <div class="intent-form">
+        <input id="intent-input" type="text" placeholder="e.g. I want to pass the AWS SAA exam" />
+        <button id="intent-btn">Declare Intent</button>
+      </div>
+      <div id="intent-status"></div>
+    </div>
+  </div>
+
+  <!-- Live Event Stream -->
+  <div class="card">
+    <h2>Live Event Stream</h2>
+    <div id="event-log"></div>
+  </div>
+
+  <div id="status-bar">
+    <span id="conn-dot"></span>
+    <span id="conn-text">Connecting to event stream…</span>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

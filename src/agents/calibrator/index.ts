@@ -117,7 +117,7 @@ function toMasteryNodePayload(n: DwellCalibratorNode): DwellMasteryNode {
   return {
     conceptId:     n.conceptId,
     confidence:    n.confidence,
-    bloomsAltitude: n.bloomsCurrentAltitude as 0 | 1 | 2 | 3 | 4 | 5 | 6,
+    bloomsAltitude: n.bloomsCurrentAltitude as 1 | 2 | 3 | 4 | 5 | 6,
     source:        n.source,
   };
 }
