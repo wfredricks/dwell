@@ -422,6 +422,8 @@ export interface DwellDomainUpdatedBroadcast {
 
 export interface DwellUpdateRequest {
   sinceVersion: string;
+  /** Reply subject — where to deliver the pre-curated delta. Typically DWELL.USER_UPDATE_DELIVERED(userId). */
+  replyTo?: string;
 }
 
 export interface DwellAffectedConcept {
@@ -438,6 +440,29 @@ export interface DwellUpdateDelivered {
   toVersion: string;
   affectedConcepts: DwellAffectedConcept[];
   deliveredAt: string; // ISO8601
+}
+
+// Answer Agent BB contributions ─────────────────────────────────────────────
+
+/**
+ * Payload posted to bb.contribution.discovery by the Zipper after collecting
+ * inter-twin discovery responses. Consumed by DwellAnswerAgent.
+ */
+export interface DwellDiscoveryContribution {
+  /** The learning intent that triggered the discovery broadcast. */
+  intent: string;
+  /** All DiscoveryResponses received from Domain Twins within the timeout window. */
+  responses: DwellDiscoveryResponse[];
+}
+
+/**
+ * Payload posted to bb.contribution.bridge-candidates by the Zipper after
+ * collecting bridge card candidates from a Domain Twin's Librarian.
+ * Consumed by DwellAnswerAgent.
+ */
+export interface DwellBridgeCandidatesContribution {
+  /** Bridge card candidates from the Domain Twin's Librarian. */
+  candidates: DwellBridgeCandidate[];
 }
 
 // Lifecycle ────────────────────────────────────────────────────────────────

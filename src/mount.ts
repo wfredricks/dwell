@@ -22,6 +22,7 @@ import { DwellCalibrator } from './agents/calibrator/index.js';
 import { DwellSurveyor } from './agents/surveyor/index.js';
 import { DwellGatekeeper } from './agents/gatekeeper/index.js';
 import { DwellCultivatorPersonal } from './agents/cultivator-personal/index.js';
+import { DwellBridge } from './agents/bridge/index.js';
 
 export async function mountDwell(deps: DwellDeps): Promise<DwellHandle> {
   const { bb, zipper, nats, graph } = deps;
@@ -71,6 +72,11 @@ export async function mountDwell(deps: DwellDeps): Promise<DwellHandle> {
   const gatekeeper = new DwellGatekeeper(deps);
   gatekeeper.mount();
   unsubscribers.push(() => gatekeeper.dispose());
+
+  // ── Sprint 2A: DwellBridge ───────────────────────────────────────────────
+  const bridge = new DwellBridge(deps);
+  bridge.mount();
+  unsubscribers.push(() => bridge.dispose());
 
   // Placeholder: announce that Dwell is mounted
   nats.publish('dwell.mounted', {
