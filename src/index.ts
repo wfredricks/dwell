@@ -1,9 +1,11 @@
 /**
  * @dwell/core — Guided Learning Experience capability for the twin constellation.
  *
- * Public API surface: mountDwell(deps) is the single integration point.
- * Add one import and one call to udt-foundation's boot-logic.ts to install Dwell.
- * Remove them to uninstall. Zero other changes to foundation required.
+ * Public API surface:
+ *   mountDwell(deps)  — single integration point into udt-foundation
+ *   BB, DWELL         — NATS subject constants
+ *   DwellBBTool       — Domain Twin registration contract
+ *   All event types   — payload interfaces for bb.* and dwell.* events
  *
  * namespace: dwell
  * catalog:   wfredricks/constellation/catalog/capabilities/dwell/manifest.yaml
@@ -12,3 +14,13 @@
 
 export { mountDwell } from './mount.js';
 export type { DwellDeps, DwellHandle } from './types.js';
+
+export { BB, DWELL } from './events/index.js';
+export type * from './events/index.js';
+
+export type {
+  DwellDomainTwinIdentity,
+  DwellDomainTwinTools,
+  DwellBBTool,
+  DwellZipperRegistry,
+} from './bbtools/index.js';
