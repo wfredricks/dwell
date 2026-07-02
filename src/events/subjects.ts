@@ -22,6 +22,8 @@ export const BB = {
 
   // Learner Model
   LEARNER_BASELINE:             (domain: string) => `bb.learner.${domain}.baseline`,
+  /** Wildcard pattern — for agents that subscribe to all domains */
+  LEARNER_BASELINE_PATTERN:     'bb.learner.*.baseline',
   LEARNER_PREFERENCES_UPDATED:  'bb.learner.preferences.updated',
 
   // Mastery
@@ -49,6 +51,13 @@ export const BB = {
   SYNTHESIS_COMPLETED:          'bb.synthesis.completed',
   ATTENTION_SURFACED:           'bb.attention.surfaced',
   ATTENTION_OUTCOME:            'bb.attention.outcome',
+
+  // Wildcard subscription patterns (used by agents that subscribe across all domains)
+  // @adopt:dwell-nats-wildcard-patterns
+  MASTERY_INITIALIZED_PATTERN:  'bb.mastery.*.initialized' as const,
+  MASTERY_UPDATED_PATTERN:      'bb.mastery.*.updated' as const,
+  GAPS_INITIAL_PATTERN:         'bb.gaps.*.initial' as const,
+  GAPS_UPDATED_PATTERN:         'bb.gaps.*.updated' as const,
 
   // Domain Currency
   DOMAIN_UPDATED:               (domain: string) => `bb.domain.${domain}.updated`,
