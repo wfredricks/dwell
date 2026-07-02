@@ -17,12 +17,19 @@
  */
 
 import type { DwellDeps, DwellHandle } from './types.js';
+import { DwellCultivatorPersonal } from './agents/cultivator-personal/index.js';
 
 export async function mountDwell(deps: DwellDeps): Promise<DwellHandle> {
   const { bb, zipper, nats, graph } = deps;
 
   // Subscriptions and registrations accumulate here for clean disposal
   const unsubscribers: Array<() => void> = [];
+
+  // ── Mount agents ────────────────────────────────────────────────────────────
+
+  const cultivatorPersonal = new DwellCultivatorPersonal(deps);
+  cultivatorPersonal.mount();
+  unsubscribers.push(() => cultivatorPersonal.dispose());
 
   // ── Register dwell.* NATS namespace ──────────────────────────────────────
   // Agents are mounted here as they are built (Sprint 1+).
@@ -54,6 +61,7 @@ export async function mountDwell(deps: DwellDeps): Promise<DwellHandle> {
         unsub();
       }
       nats.publish('dwell.unmounted', { timestamp: new Date().toISOString() });
+      // unsubscribers already called above
     },
   };
 }

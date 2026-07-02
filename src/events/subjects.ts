@@ -17,6 +17,8 @@ export const BB = {
   // Intent & Lifecycle
   INTENT_DECLARED:              'bb.intent.declared',
   CERT_ACHIEVED:                (domain: string) => `bb.cert.${domain}.achieved`,
+  /** Wildcard pattern — for agents that subscribe to all domains */
+  CERT_ACHIEVED_PATTERN:        'bb.cert.*.achieved',
 
   // Learner Model
   LEARNER_BASELINE:             (domain: string) => `bb.learner.${domain}.baseline`,

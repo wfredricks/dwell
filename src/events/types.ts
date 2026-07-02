@@ -14,6 +14,21 @@
 
 // ── Common Types ──────────────────────────────────────────────────────────
 
+/** Evidence type — maps directly to a Bloom's altitude. read-about→1, explained→2, applied→3, diagnosed→4, evaluated→5, designed→6. */
+export type DwellEvidenceType = 'read-about' | 'explained' | 'applied' | 'diagnosed' | 'evaluated' | 'designed';
+
+/** A single piece of evidence from a learner's history with a concept. */
+export interface DwellEvidence {
+  evidenceId: string;
+  /** Specific concept node ID from the domain knowledge graph */
+  conceptId: string;
+  /** High-level domain, e.g. "IAM", "EC2", "nuclear-safety" */
+  conceptDomain: string;
+  evidenceType: DwellEvidenceType;
+  source: string;
+  occurredAt: string; // ISO8601
+}
+
 /** Bloom's Taxonomy altitude (1=Remember → 6=Create) */
 export type DwellBloomsLevel = 1 | 2 | 3 | 4 | 5 | 6;
 
@@ -32,6 +47,19 @@ export type DwellLearnerState = 'plateau' | 'confused' | 'slow';
 export type DwellPreferenceType = 'path-order' | 'methodology' | 'batch-start';
 
 // ── Part 1: Intra-Twin Event Payloads (bb.*) ──────────────────────────────
+
+// Antiquarian ──────────────────────────────────────────────────────────────
+
+/**
+ * AntiquarianSnapshot — ContextNode written to the Blackboard after each baseline update.
+ * Key: 'dwell.antiquarian.snapshot'. Consumed by Bridge and other agents via BB;
+ * no agent calls Antiquarian directly (G8 resolution).
+ */
+export interface DwellAntiquarianSnapshot {
+  domain: string;
+  nodes: DwellLearnerBaselineNode[];
+  updatedAt: string; // ISO8601
+}
 
 // Intent & Lifecycle ───────────────────────────────────────────────────────
 
