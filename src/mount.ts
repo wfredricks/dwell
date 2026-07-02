@@ -24,6 +24,7 @@ import { DwellGatekeeper } from './agents/gatekeeper/index.js';
 import { DwellCultivatorPersonal } from './agents/cultivator-personal/index.js';
 import { DwellBridge } from './agents/bridge/index.js';
 import { DwellAnswerAgent } from './agents/answer-agent/index.js';
+import { DwellZipperIntertwin } from './agents/zipper-intertwin/index.js';
 
 export async function mountDwell(deps: DwellDeps): Promise<DwellHandle> {
   const { bb, zipper, nats, graph } = deps;
@@ -84,6 +85,13 @@ export async function mountDwell(deps: DwellDeps): Promise<DwellHandle> {
   answerAgent.mount();
   unsubscribers.push(() => answerAgent.dispose());
 
+  // ── Sprint 3A: DwellZipperIntertwin ──────────────────────────────────────
+  // The ONLY agent that crosses the bb.* / dwell.* boundary.
+  // Exposes .registry for Domain Twin registration at channel-open time.
+  const zipperIntertwin = new DwellZipperIntertwin(deps);
+  zipperIntertwin.mount();
+  unsubscribers.push(() => zipperIntertwin.dispose());
+
   // Domain Twin agents (DwellCultivatorDomain, DwellTester) are instantiated by
   // Domain Twin implementations — see src/agents/domain-twin/
   // They are NOT mounted here; the Personal Twin does not own Domain Twin agents.
@@ -95,6 +103,7 @@ export async function mountDwell(deps: DwellDeps): Promise<DwellHandle> {
   });
 
   return {
+    registry: zipperIntertwin.registry,
     async dispose() {
       // Tear down all subscriptions in reverse order
       for (const unsub of [...unsubscribers].reverse()) {

@@ -23,6 +23,8 @@ export interface DwellDeps {
  */
 export interface DwellHandle {
   dispose: () => Promise<void>
+  /** The Zipper inter-twin registry. Domain Twins register here at connection time. */
+  registry: import('./bbtools/contract.js').DwellZipperRegistry
 }
 
 // ── Placeholders until udt-foundation exports these types ──────────────────

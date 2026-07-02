@@ -102,4 +102,8 @@ export const DWELL = {
   // Dwell lifecycle
   MOUNTED:                      'dwell.mounted',
   UNMOUNTED:                    'dwell.unmounted',
+
+  // Wildcard subscription patterns (used by DwellZipperIntertwin)
+  // @adopt:dwell-nats-dwell-wildcard-patterns
+  DOMAIN_UPDATED_PATTERN:       'dwell.domain.*.updated' as const,
 } as const;

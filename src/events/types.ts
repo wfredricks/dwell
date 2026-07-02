@@ -465,6 +465,54 @@ export interface DwellBridgeCandidatesContribution {
   candidates: DwellBridgeCandidate[];
 }
 
+// BB Need Payloads (bb.need.*) — consumed by DwellZipperIntertwin ────────────
+
+/**
+ * Payload for bb.need.discovery — triggers a discovery broadcast to Domain Twins.
+ */
+export interface DwellDiscoveryNeed {
+  userId: string;
+  intent: string;
+  sourceKnowledge: DwellSourceKnowledge[];
+  timeoutMs: number;
+}
+
+/**
+ * Payload for bb.need.kg — requests the knowledge graph from a specific Domain Twin.
+ */
+export interface DwellKgNeed {
+  userId: string;
+  twinId: string;
+  request: DwellKgRequest;
+}
+
+/**
+ * Payload for bb.need.bridge — requests bridge card candidates from a Domain Twin.
+ */
+export interface DwellBridgeNeed {
+  userId: string;
+  twinId: string;
+  request: DwellBridgeQuery;
+}
+
+/**
+ * Payload for bb.need.assessment — requests assessment items from a Domain Twin.
+ */
+export interface DwellAssessmentNeed {
+  userId: string;
+  twinId: string;
+  request: DwellAssessmentRequest;
+}
+
+/**
+ * Payload for bb.need.outcome-signal — delivers an anonymized outcome signal
+ * to a Domain Twin (fire-and-forget).
+ */
+export interface DwellOutcomeSignalNeed {
+  twinId: string;
+  signal: DwellOutcomeSignal;
+}
+
 // Lifecycle ────────────────────────────────────────────────────────────────
 
 export interface DwellMounted {
